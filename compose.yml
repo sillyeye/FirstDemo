@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/first_database
+      SPRING_DATASOURCE_USERNAME: db_user
+      SPRING_DATASOURCE_PASSWORD: db_password
+    networks:
+      - first-network
+    volumes:
+        - ./logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"  # Rotate log files after reaching 10MB
+        max-file: "3"
+    #network_mode: "host"
+
+  mysql:
+    image: mysql
+    container_name: first-mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: first_database
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_password
+    ports:
+      - "3306:3306"
+    networks:
+      - first-network
+    volumes:
+        - mysql-data:/var/lib/first_mysql
+
+networks:
+  first-network:
+    # Use a custom driver
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
+  logs:
+    driver: local
