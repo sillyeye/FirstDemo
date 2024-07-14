@@ -1,24 +1,35 @@
 package com.example.web.FirstDemo.RestController;
 
+import com.example.web.FirstDemo.Mapper.UserMapper;
 import com.example.web.FirstDemo.Model.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
+    private final ApplicationContext applicationContext;
+
+    @Autowired
+    public UserController(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    @PostMapping("/create")
+    public void createUser(@RequestBody User user) {
+        UserMapper userMapper = this.applicationContext.getBean(UserMapper.class);
+
+        userMapper.insertUser(user);
+    }
+
     @GetMapping("/all")
     public List<User> getAllUsers() {
-        List<User> users = new ArrayList<>();
+        UserMapper userMapper = this.applicationContext.getBean(UserMapper.class);
 
-        for (int i = 0;i < 10;++i) {
-            users.add(new User("user-name-" + i, 30 + i));
-        }
-
-        return users;
+        return userMapper.getAllUsers();
     }
 }

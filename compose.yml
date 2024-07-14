@@ -9,7 +9,7 @@ services:
     depends_on:
       - mysql
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/first_database
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/first_demo
       SPRING_DATASOURCE_USERNAME: db_user
       SPRING_DATASOURCE_PASSWORD: db_password
     networks:
@@ -28,7 +28,7 @@ services:
     container_name: first-mysql-container
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: first_database
+      MYSQL_DATABASE: first_demo
       MYSQL_USER: db_user
       MYSQL_PASSWORD: db_password
     ports:
@@ -36,7 +36,8 @@ services:
     networks:
       - first-network
     volumes:
-        - mysql-data:/var/lib/first_mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./mysql-data:/var/lib/mysql
 
 networks:
   first-network:
