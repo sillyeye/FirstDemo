@@ -8,10 +8,13 @@ services:
       - "8080:8080"
     depends_on:
       - mysql
+      - redis
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/first_demo
       SPRING_DATASOURCE_USERNAME: db_user
       SPRING_DATASOURCE_PASSWORD: db_password
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
     networks:
       - first-network
     volumes:
@@ -39,6 +42,17 @@ services:
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./mysql-data:/var/lib/mysql
 
+  redis:
+    image: redis:latest
+    container_name: first-redis-container
+    hostname: redis
+    networks:
+      - first-network
+    volumes:
+      - ./redis-data:/data
+    ports:
+      - "6379:6379"
+
 networks:
   first-network:
     # Use a custom driver
@@ -46,6 +60,8 @@ networks:
 
 volumes:
   mysql-data:
+    driver: local
+  redis-data:
     driver: local
   logs:
     driver: local
